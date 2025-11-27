@@ -205,6 +205,6 @@ class ConsumerWorker(Thread):
                                            processer, self.option.offset_start_time,
                                            max_fetch_log_group_size=self.option.max_fetch_log_group_size,
                                            executor=self._executor,
-                                           offset_end_time=self.option.offset_end_time)
+                                           offset_end_time=self.option.offset_end_time, query=self.option.query)
         self.partition_consumers[key] = consumer
         return consumer

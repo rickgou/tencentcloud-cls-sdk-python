@@ -21,7 +21,7 @@ class LogHubConfig(object):
                  consumer_group_name, consumer_name, internal=False,
                  heartbeat_interval=None, data_fetch_interval=None, offset_position=None,
                  offset_start_time=None, max_fetch_log_group_size=None, worker_pool_size=None,
-                 shared_executor=None, offset_end_time=None):
+                 shared_executor=None, offset_end_time=None, query=None):
         """
         :param endpoint:
         :param access_key_id:
@@ -39,6 +39,7 @@ class LogHubConfig(object):
         :param shared_executor: shared executor, if not None, worker_pool_size will be ignored.
         :param offset_end_time: offset end time, default is None (never stop processing), could be "str(unix timestamp)".
         :param region: region of topic_id.
+        :param query: custom dsl filter rule.
         """
         self.endpoint = endpoint
         self.access_key_id = access_key_id
@@ -58,3 +59,4 @@ class LogHubConfig(object):
         self.consumer_group_time_out = self.heartbeat_interval * 2
         self.offset_end_time = offset_end_time or None  # default to None
         self.region = region
+        self.query = query

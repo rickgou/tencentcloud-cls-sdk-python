@@ -172,13 +172,14 @@ def consumer_initialize_task(processor, consumer_client, topic_id, partition_id,
 
 
 def consumer_fetch_task(loghub_client_adapter, topic_id, partition_id, offset, max_fetch_log_group_size=1000,
-                        end_time=None):
+                        end_time=None, query=None):
     exception = None
 
     for retry_times in range(3):
         try:
             response = loghub_client_adapter.pull_logs(topic_id, partition_id,
-                                                       max_fetch_log_group_size, offset=offset, end_time=end_time)
+                                                       max_fetch_log_group_size, offset=offset, end_time=end_time,
+                                                       query=query)
             fetch_log_groups = response.get_log_groups()
             next_offset = response.get_next_offset()
             logger.debug("topic id = %s partition id = %s offset = %s next offset = %s size: %d",
