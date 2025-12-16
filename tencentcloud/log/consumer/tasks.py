@@ -161,6 +161,8 @@ def consumer_initialize_task(processor, consumer_client, topic_id, partition_id,
         processor.initialize(topic_id)
         is_offset_persistent = False
         c_offset = consumer_client.get_partition_offsets(topic_id, partition_id, offset_start_time)
+        # sleep 100ms， 避免分区较多时，get_offsets 触发频控
+        time.sleep(0.1)
         offset = -1
         if c_offset > 0:
             is_offset_persistent = True
