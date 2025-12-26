@@ -2,6 +2,7 @@
 import json
 import os
 from threading import RLock
+
 from tencentcloud.log.consumer import *
 from tencentcloud.log.logclient import YunApiLogClient
 
@@ -13,13 +14,10 @@ handler.setFormatter(logging.Formatter(
     datefmt='%Y-%m-%d %H:%M:%S'))
 root.setLevel(logging.INFO)
 root.addHandler(handler)
-
 logger = logging.getLogger(__name__)
 
 
 # 消费者处理消费的数据
-
-
 class SampleConsumer(ConsumerProcessorBase):
     last_check_time = 0
     log_results = []
@@ -85,6 +83,7 @@ def sleep_until(seconds, exit_condition=None, expect_error=False):
             if expect_error:
                 continue
         time.sleep(1)
+
 
 # 消费组操作
 

@@ -100,8 +100,8 @@ class ConsumerClient(object):
         return self.yunapi_client.get_offsets(self.logset_id, self.consumer_group, topic_id, partition_id,
                                               position).get_consumer_group_partition_offsets()
 
-    def pull_logs(self, topic_id, partition_id, size, start_time=0, offset=0, end_time=None):
-        return self.client.pull_logs(topic_id, partition_id, size, start_time, offset, end_time)
+    def pull_logs(self, topic_id, partition_id, size, start_time=0, offset=0, end_time=None, query=None):
+        return self.client.pull_logs(topic_id, partition_id, size, start_time, offset, end_time, query)
 
     def delete_consumer_group(self):
         return self.yunapi_client.delete_consumer_group(self.logset_id, self.consumer_group)

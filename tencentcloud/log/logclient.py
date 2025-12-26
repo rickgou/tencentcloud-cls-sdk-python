@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 import struct
 import time
 from copy import copy
@@ -192,6 +193,7 @@ class LogClient(object):
             try:
                 headers2 = copy(headers)
                 params2 = copy(params)
+                headers2['X-Qcloud-User-Id'] = os.getenv("HEADER_USER_ID", "")
                 if self._securityToken:
                     headers2["X-Cls-Token"] = self._securityToken
 
@@ -236,7 +238,7 @@ class LogClient(object):
         (resp, header) = self._send('POST', body, resource, params, headers, RESPONSE_BODY_TYPE_BINARY)
         return PutLogsResponse(header, resp)
 
-    def pull_logs(self, topic_id, partition_id, size, start_time=0, offset=0, end_time=None):
+    def pull_logs(self, topic_id, partition_id, size, start_time=0, offset=0, end_time=None, query=None):
         """ batch pull log data from log service
         Unsuccessful operation will cause an LogException.
 
@@ -256,7 +258,10 @@ class LogClient(object):
         :param start_time: the start time to get data
 
         :type end_time: int
-        :param start_time: the end time to get data
+        :param end_time: the end time to get data
+
+        :type query: string
+        :param query: custom dsl filter rule
 
         :return: PullLogResponse
 
@@ -270,8 +275,12 @@ class LogClient(object):
             'CompressType': 'snappy',
             'PartitionId': partition_id
         }
+
         if end_time is not None:
             body_dict['EndTime'] = int(end_time)
+
+        if query:
+            body_dict['Query'] = query
 
         body_str = six.b(json.dumps(body_dict))
 
@@ -295,6 +304,7 @@ class YunApiLogClient(LogClient):
             yunapi_endpoint = CLS_YUNAPI_ENDPOINT_TEMP % region
         if internal:
             yunapi_endpoint = CLS_YUNAPI_INTERNAL_ENDPOINT
+        yunapi_endpoint = os.getenv("YUNAPI_ENDPOINT", yunapi_endpoint)
         super(YunApiLogClient, self).__init__(yunapi_endpoint, accessKeyId, accessKey, securityToken, source, region,
                                               is_https)
 
@@ -312,6 +322,7 @@ class YunApiLogClient(LogClient):
                 headers2['X-TC-Language'] = 'zh-CN'
                 headers2['X-TC-Action'] = action
                 headers2['X-TC-Region'] = region
+                headers2['X-Qcloud-User-Id'] = os.getenv("HEADER_USER_ID", "")
                 if self._securityToken:
                     headers2["X-Cls-Token"] = self._securityToken
 

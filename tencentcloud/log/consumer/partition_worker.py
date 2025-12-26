@@ -27,7 +27,7 @@ class PartitionConsumerWorkerLoggerAdapter(logging.LoggerAdapter):
 
 class PartitionConsumerWorker(object):
     def __init__(self, log_client, topic_id, partition_id, consumer_name, processor, offset_start_time,
-                 max_fetch_log_group_size=1000, executor=None, offset_end_time=None):
+                 max_fetch_log_group_size=1000, executor=None, offset_end_time=None, query=None):
         self.topic_id = topic_id
         self.log_client = log_client
         self.partition_id = partition_id
@@ -58,6 +58,7 @@ class PartitionConsumerWorker(object):
         self.save_last_offset = False
         self.fetch_reach_end = False
         self.next_task_reach_end = False
+        self.query = query
 
         self.logger = PartitionConsumerWorkerLoggerAdapter(
             logging.getLogger(__name__), {"partition_consumer_worker": self})
@@ -126,7 +127,7 @@ class PartitionConsumerWorker(object):
                         self.executor.submit(consumer_fetch_task,
                                              self.log_client, self.topic_id, self.partition_id, self.next_fetch_offset,
                                              max_fetch_log_group_size=self.max_fetch_log_group_size,
-                                             end_time=self.offset_end_time)
+                                             end_time=self.offset_end_time, query=self.query)
                 else:
                     self.fetch_data_future = None
             else:
