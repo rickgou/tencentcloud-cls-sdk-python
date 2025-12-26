@@ -2,10 +2,8 @@
 import json
 import os
 import signal
-from threading import RLock
 
 from tencentcloud.log.consumer import *
-from tencentcloud.log.logclient import YunApiLogClient
 
 # logger
 root = logging.getLogger()
@@ -66,22 +64,6 @@ class SampleConsumer(ConsumerProcessorBase):
             traceback.print_exc()
 
 
-def sleep_until(seconds, exit_condition=None, expect_error=False):
-    if not exit_condition:
-        time.sleep(seconds)
-        return
-
-    s = time.time()
-    while time.time() - s < seconds:
-        try:
-            if exit_condition():
-                break
-        except Exception:
-            if expect_error:
-                continue
-        time.sleep(1)
-
-
 class App:
     def __init__(self):
         self.shutdown_flag = False
@@ -105,8 +87,9 @@ class App:
         self.consumer_group = 'consumer-group-1'
         # consumer id
         self.consumer_name1 = "consumer-group-1-A"
-        assert self.endpoint and self.access_key_id and self.access_key and self.logset_id, ValueError("endpoint/access_id/access_key and "
-                                                                                                       "logset_id cannot be empty")
+        assert self.endpoint and self.access_key_id and self.access_key and self.logset_id, ValueError(
+            "endpoint/access_id/access_key and "
+            "logset_id cannot be empty")
         signal.signal(signal.SIGTERM, self.signal_handler)
         signal.signal(signal.SIGINT, self.signal_handler)
 
@@ -128,7 +111,8 @@ class App:
     def consume(self):
         try:
             # consumer config
-            option1 = LogHubConfig(self.endpoint, self.access_key_id, self.access_key, self.region, self.logset_id, self.topic_ids, self.consumer_group,
+            option1 = LogHubConfig(self.endpoint, self.access_key_id, self.access_key, self.region, self.logset_id,
+                                   self.topic_ids, self.consumer_group,
                                    self.consumer_name1, heartbeat_interval=3, data_fetch_interval=1,
                                    offset_start_time='begin', max_fetch_log_group_size=1048576)
             # init consumer
